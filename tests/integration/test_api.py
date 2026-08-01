@@ -24,3 +24,10 @@ def test_import_and_submit_are_idempotent() -> None:
     response = client.post(f"/shipments/{first['id']}/submit", headers={"Idempotency-Key": "demo-key"})
     assert response.status_code == 202
     assert client.get("/health").json()["api"] == "ok"
+
+
+def test_import_rejects_invalid_workbook() -> None:
+    client = TestClient(create_app())
+    response = client.post("/shipments/import", files={"file": ("broken.xlsx", b"not an xlsx")})
+    assert response.status_code == 422
+    assert response.json()["detail"]["code"] == "invalid_xlsx"

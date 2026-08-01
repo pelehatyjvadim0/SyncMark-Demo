@@ -11,3 +11,11 @@ jobs:
       - run: uv run ruff check .
       - run: uv run pyright
       - run: uv run pytest -q
+  compose-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose up --build -d
+      - run: |
+          for attempt in {1..20}; do curl --fail http://127.0.0.1:8000/health && break || sleep 2; done
+      - run: docker compose down -v

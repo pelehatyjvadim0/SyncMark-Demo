@@ -13,6 +13,4 @@ app = create_app(repository, FastStreamPublisher(broker))
 
 @app.on_event("startup")
 async def prepare_dependencies() -> None:
-    await repository.create_schema()
     await broker.connect()
-

@@ -1,19 +1,28 @@
 services:
   api:
     build: .
+    image: syncmark-demo-api
     environment: {PYTHONPATH: /app/src}
     volumes: [".:/app", "labels:/app/generated-labels"]
     ports: ["8000:8000"]
     depends_on:
-      postgres: {condition: service_healthy}
+      migrate: {condition: service_completed_successfully}
       rabbitmq: {condition: service_started}
+  migrate:
+    image: syncmark-demo-api
+    command: alembic upgrade head
+    environment: {PYTHONPATH: /app/src}
+    volumes: [".:/app"]
+    depends_on:
+      postgres: {condition: service_healthy}
   worker:
     build: .
+    image: syncmark-demo-api
     command: python -m syncmark_demo.worker
     environment: {PYTHONPATH: /app/src}
     volumes: [".:/app", "labels:/app/generated-labels"]
     depends_on:
-      postgres: {condition: service_healthy}
+      migrate: {condition: service_completed_successfully}
       rabbitmq: {condition: service_started}
   postgres:
     image: postgres:16-alpine

@@ -20,6 +20,7 @@ docker compose up --build
 ```
 
 Compose starts the API, PostgreSQL, RabbitMQ, and a FastStream worker. `GET /health` verifies the API's PostgreSQL and RabbitMQ wiring.
+The `migrate` service applies the tracked Alembic revision before the API and worker start.
 
 ## API flow
 

@@ -16,7 +16,6 @@ processor = ProcessShipment(repository, MockCatalogGateway(), SyntheticLabelGene
 
 @broker.subscriber("shipment.commands")
 async def process_command(message: dict[str, str]) -> None:
-    await repository.create_schema()
     await processor.execute(message["shipment_id"])
 
 
