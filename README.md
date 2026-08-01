@@ -1,3 +1,7 @@
+<div align="center">
+  <img width="100%" alt="SyncMark Demo — synthetic marking workflow" src="./assets/readme/syncmark-demo-header.svg" />
+</div>
+
 # SyncMark Demo
 
 A clean-room FastAPI showcase of a synthetic product-marking shipment workflow. It has no connection to commercial, regulatory, or production APIs.
