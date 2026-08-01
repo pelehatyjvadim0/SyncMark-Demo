@@ -13,18 +13,14 @@ Upload an XLSX with `GTIN`, `category`, `quantity`, and `product_name`; normaliz
 ## Quick start
 
 ```bash
-uv sync --python python3.12 --group dev
-uv run uvicorn syncmark_demo.main:app --reload
-```
-
-Then open `http://127.0.0.1:8000/docs`. Start the local service dependencies with:
-
-```bash
 docker compose up --build
 ```
 
 Compose starts the API, PostgreSQL, RabbitMQ, and a FastStream worker. `GET /health` verifies the API's PostgreSQL and RabbitMQ wiring.
 The `migrate` service applies the tracked Alembic revision before the API and worker start.
+
+Then open the API documentation at `http://127.0.0.1:8000/docs`. The API is available at
+`http://127.0.0.1:8000`.
 
 ## API flow
 
