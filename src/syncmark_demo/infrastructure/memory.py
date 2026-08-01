@@ -14,6 +14,9 @@ class MemoryRepository:
     async def save(self, shipment: Shipment) -> None:
         self.shipments[shipment.id] = shipment
 
+    async def ping(self) -> None:
+        return None
+
 
 class RecordingPublisher:
     def __init__(self) -> None:
@@ -21,3 +24,6 @@ class RecordingPublisher:
 
     async def publish(self, shipment_id: str) -> None:
         self.commands.append(shipment_id)
+
+    async def ping(self) -> None:
+        return None

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, Header, HTTPException, UploadFile
 from pydantic import BaseModel
+from sqlalchemy.exc import SQLAlchemyError
 
 from syncmark_demo.application.import_shipment import ImportShipment
 from syncmark_demo.application.submit_shipment import SubmitShipment
@@ -56,8 +57,16 @@ def create_app(repository: ShipmentRepository | None = None, publisher: CommandP
 
     @app.get("/health")
     async def health() -> dict[str, str]:
-        database = "ok" if hasattr(repository, "engine") else "in_memory"
-        queue = "ok" if publisher.__class__.__name__ == "FastStreamPublisher" else "in_memory"
+        try:
+            await repository.ping()
+            database = "ok"
+        except (ConnectionError, OSError, SQLAlchemyError):
+            database = "unavailable"
+        try:
+            await publisher.ping()
+            queue = "ok"
+        except (ConnectionError, OSError):
+            queue = "unavailable"
         return {"api": "ok", "postgresql": database, "rabbitmq": queue}
 
     return app
