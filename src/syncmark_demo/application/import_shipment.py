@@ -9,15 +9,15 @@ class ImportShipment:
     def __init__(self, repository: ShipmentRepository, reader: SpreadsheetReader) -> None:
         self.repository, self.reader = repository, reader
 
-    def execute(self, filename: str, content: bytes) -> Shipment:
+    async def execute(self, filename: str, content: bytes) -> Shipment:
         if not filename.endswith(".xlsx"):
             raise ValueError("only .xlsx uploads are supported")
         digest = sha256(content).hexdigest()
-        if existing := self.repository.by_hash(digest):
+        if existing := await self.repository.by_hash(digest):
             return existing
         rows = self.reader.read(content)
         result = validate_rows(rows)
         status = ShipmentStatus.VALIDATED if result.is_valid else ShipmentStatus.DRAFT
         shipment = Shipment(digest, result.normalized_items, result.errors, status)
-        self.repository.save(shipment)
+        await self.repository.save(shipment)
         return shipment

@@ -19,6 +19,8 @@ Then open `http://127.0.0.1:8000/docs`. Start the local service dependencies wit
 docker compose up --build
 ```
 
+Compose starts the API, PostgreSQL, RabbitMQ, and a FastStream worker. `GET /health` verifies the API's PostgreSQL and RabbitMQ wiring.
+
 ## API flow
 
 `POST /shipments/import` accepts an `.xlsx` upload. `POST /shipments/{id}/submit` requires `Idempotency-Key`. `GET /shipments/{id}` returns status, structured validation issues, item count, and synthetic label URLs. `GET /health` exposes component status.

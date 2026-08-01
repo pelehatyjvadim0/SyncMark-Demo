@@ -9,7 +9,7 @@ class ProcessShipment:
         self.repository, self.gateway, self.labels = repository, gateway, labels
 
     async def execute(self, shipment_id: str) -> Shipment:
-        shipment = self.repository.get(shipment_id)
+        shipment = await self.repository.get(shipment_id)
         if shipment is None:
             raise LookupError("shipment not found")
         if shipment.status is ShipmentStatus.VALIDATED:
@@ -26,7 +26,7 @@ class ProcessShipment:
         except (TimeoutError, ValueError) as error:
             shipment.issues.append(ValidationIssue(code=str(error), field="catalog", row=None, message="Synthetic catalogue processing failed"))
             shipment.transition_to(ShipmentStatus.FAILED)
-        self.repository.save(shipment)
+        await self.repository.save(shipment)
         return shipment
 
     async def _lookup(self, gtin: str) -> dict[str, str | bool]:

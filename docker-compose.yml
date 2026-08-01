@@ -1,7 +1,17 @@
 services:
   api:
     build: .
+    environment: {PYTHONPATH: /app/src}
+    volumes: [".:/app", "labels:/app/generated-labels"]
     ports: ["8000:8000"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      rabbitmq: {condition: service_started}
+  worker:
+    build: .
+    command: python -m syncmark_demo.worker
+    environment: {PYTHONPATH: /app/src}
+    volumes: [".:/app", "labels:/app/generated-labels"]
     depends_on:
       postgres: {condition: service_healthy}
       rabbitmq: {condition: service_started}
@@ -18,3 +28,5 @@ services:
       retries: 10
   rabbitmq:
     image: rabbitmq:4-alpine
+volumes:
+  labels:
